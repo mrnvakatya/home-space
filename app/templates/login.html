@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name }} — вход</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;1,500&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+</head>
+<body>
+<div class="auth">
+  <section class="story">
+    <div class="brand" style="padding:0">
+      <span class="ring"><i></i></span><b>home space</b>
+    </div>
+    <div>
+      <h1 class="display">скажите мысль. получите задачу.</h1>
+      <p>Пишите как думаете. Приложение само найдёт суть, срок и тег и разложит всё по доске и календарю.</p>
+    </div>
+    <div class="ticket">
+      <span style="font-size:17px">«Подготовить отчет по практике к пятнице 15:00»</span>
+      <hr>
+      <div class="btns">
+        <span class="chip">Подготовить отчет по практике</span>
+        <span class="chip">Пт, 15:00</span>
+        <span class="chip" style="background:rgba(217,139,124,.16);color:#E39A8B;font-weight:600">Учеба</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="skyside">
+    <div class="sky">
+      <svg viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="600" height="900" fill="#BCCFE4"/>
+        <g transform="translate(380 90) scale(2.2)" fill="#fff" fill-opacity=".6"><circle cx="40" cy="38" r="18"/><circle cx="66" cy="28" r="24"/><circle cx="96" cy="38" r="18"/><rect x="40" y="38" width="56" height="18" rx="9"/></g>
+        <g transform="translate(20 330) scale(1.6)" fill="#fff" fill-opacity=".5"><circle cx="40" cy="38" r="18"/><circle cx="66" cy="28" r="24"/><circle cx="96" cy="38" r="18"/><rect x="40" y="38" width="56" height="18" rx="9"/></g>
+        <g transform="translate(330 690) scale(2)" fill="#fff" fill-opacity=".55"><circle cx="40" cy="38" r="18"/><circle cx="66" cy="28" r="24"/><circle cx="96" cy="38" r="18"/><rect x="40" y="38" width="56" height="18" rx="9"/></g>
+        <g transform="translate(60 780) scale(1.2)" fill="#fff" fill-opacity=".45"><circle cx="40" cy="38" r="18"/><circle cx="66" cy="28" r="24"/><circle cx="96" cy="38" r="18"/><rect x="40" y="38" width="56" height="18" rx="9"/></g>
+      </svg>
+
+      <form class="card2" id="auth-form" novalidate>
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab on" role="tab" data-mode="login">Вход</button>
+          <button type="button" class="tab" role="tab" data-mode="register">Регистрация</button>
+        </div>
+        <h2 class="display" id="auth-title">с возвращением</h2>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="fld" id="name-field" hidden><label for="f-name" class="eyebrow">Имя</label><input id="f-name" class="field" type="text" placeholder="Как к вам обращаться" autocomplete="name"></div>
+          <div class="fld"><label for="f-mail" class="eyebrow">Почта</label><input id="f-mail" class="field" type="email" placeholder="name@mail.ru" autocomplete="email" required></div>
+          <div class="fld"><label for="f-pass" class="eyebrow">Пароль</label><input id="f-pass" class="field" type="password" placeholder="Не короче 8 символов" autocomplete="current-password" required></div>
+        </div>
+        <div class="err" id="auth-err" role="alert"></div>
+        <button class="go" type="submit" id="auth-submit">Войти</button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script>
+  let mode = 'login';
+  const $ = (id) => document.getElementById(id);
+  document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === b));
+    $('name-field').hidden = mode !== 'register';
+    $('auth-title').textContent = mode === 'register' ? 'создать аккаунт' : 'с возвращением';
+    $('auth-submit').textContent = mode === 'register' ? 'Создать аккаунт' : 'Войти';
+    $('auth-err').textContent = '';
+  }));
+  $('auth-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = { email: $('f-mail').value.trim(), password: $('f-pass').value };
+    if (mode === 'register') body.name = $('f-name').value.trim();
+    const r = await fetch('/api/auth/' + mode, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    if (r.ok) { location.href = '/'; return; }
+    let msg = 'Не удалось выполнить вход';
+    try {
+      const d = await r.json();
+      msg = typeof d.detail === 'string' ? d.detail : 'Проверьте почту и пароль (не короче 8 символов)';
+    } catch (_) {}
+    $('auth-err').textContent = msg;
+  });
+</script>
+</body>
+</html>
