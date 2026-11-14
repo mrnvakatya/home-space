@@ -7,56 +7,6 @@
 
 Стек: Python 3.11+, FastAPI, SQLAlchemy 2, SQLite (по умолчанию) или PostgreSQL, Jinja2 и чистый JavaScript на фронтенде (без сборки).
 
-## Быстрый старт в PyCharm
-
-1. **File → Open** и выберите папку `home-space`.
-2. Создайте окружение: **Settings → Project → Python Interpreter → Add Interpreter → Add Local Interpreter → Virtualenv** (Python 3.11 или новее). PyCharm предложит поставить зависимости из `requirements.txt`. Если нет, откройте терминал PyCharm и выполните:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Скопируйте `.env.example` в `.env` (можно оставить значения как есть для локальной разработки).
-4. (По желанию) создайте демо-данные:
-   ```bash
-   python -m app.seed
-   ```
-   Вход: `demo@homespace.app` / `password123`.
-5. Запуск. Создайте конфигурацию **Run → Edit Configurations → + → Python**:
-   - тип запуска: **Module name** → `uvicorn`
-   - параметры: `app.main:app --reload`
-   - рабочая папка: корень проекта
-
-   Или просто в терминале:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-6. Откройте http://127.0.0.1:8000. Документация API (Swagger): http://127.0.0.1:8000/docs.
-
-Таблицы в базе создаются автоматически при первом запуске.
-
-## Тесты
-
-В PyCharm: правый клик по папке `tests` → **Run 'pytest in tests'**. Или в терминале:
-```bash
-pytest
-```
-
-## Загрузка в git
-
-В терминале PyCharm (**Alt+F12**) из корня проекта:
-
-```bash
-git init
-git add .
-git commit -m "Первая версия Home space"
-git branch -M main
-git remote add origin https://github.com/<ваш-логин>/home-space.git
-git push -u origin main
-```
-
-Сначала создайте пустой репозиторий на GitHub или GitLab без README. Файл `.gitignore` уже исключает `.env`, базу `*.db`, `.venv` и `.idea`, так что секреты и локальные данные в репозиторий не попадут. В репозиторий нужно коммитить `.env.example`, а не `.env`.
-
-Через интерфейс PyCharm то же самое: **Git → Create Git Repository → Commit → Git → Manage Remotes → Push**.
-
 ## Структура
 
 ```
@@ -101,7 +51,7 @@ tests/               тесты парсера и API
 2. В `.env`: `DATABASE_URL=postgresql+psycopg://user:password@localhost:5432/homespace`.
 3. Для работы с изменением схемы в будущем добавьте Alembic. Сейчас таблицы создаются через `create_all`.
 
-## Что дальше (по желанию)
+## Что дальше 
 
 - Голосовой ввод заметок.
 - Повторяющиеся задачи и чек-листы.
